@@ -1,9 +1,14 @@
+import os.path
+
 from PySide2.QtCore import Qt, QSize
 from PySide2.QtGui import QColor, QIcon
 from PySide2.QtWidgets import QMainWindow, QVBoxLayout, QTreeWidget, QTreeWidgetItem, QWidget, QApplication, \
     QPushButton, QHBoxLayout
 from .core import Check
 from .utils import getMayaMainWindow
+
+
+ICON_FOLDER = os.path.join(os.path.dirname(__file__), 'icon')
 
 
 class CheckItem(QTreeWidgetItem):
@@ -52,6 +57,7 @@ class SanityCheckUi(QMainWindow):
 
     WINDOW_TITLE_PATTERN = 'Sanity Check - {name}'
     BUTTON_SIZE = QSize(75, 75)
+    ICON_SIZE = QSize(50, 50)
 
     def __init__(self, parent, name, checks):
         super().__init__(parent)
@@ -65,33 +71,45 @@ class SanityCheckUi(QMainWindow):
         self.checkTree.setHeaderHidden(True)
 
         checkAllBtn = QPushButton()
+        checkAllBtn.setIcon(QIcon(os.path.join(ICON_FOLDER, 'eclat.png')))
+        checkAllBtn.setIconSize(self.ICON_SIZE)
         checkAllBtn.setFixedSize(self.BUTTON_SIZE)
         checkAllBtn.setToolTip('Check All')
         checkAllBtn.clicked.connect(self.checkAll)
 
         checkSelectedBtn = QPushButton()
+        checkSelectedBtn.setIcon(QIcon(os.path.join(ICON_FOLDER, 'bouton-jouer.png')))
+        checkSelectedBtn.setIconSize(self.ICON_SIZE)
         checkSelectedBtn.setFixedSize(self.BUTTON_SIZE)
         checkSelectedBtn.setToolTip('Check Selected')
 
         infoOnSelectedBtn = QPushButton()
+        infoOnSelectedBtn.setIcon(QIcon(os.path.join(ICON_FOLDER, 'bouton-dinformation.png')))
+        infoOnSelectedBtn.setIconSize(self.ICON_SIZE)
         infoOnSelectedBtn.setFixedSize(self.BUTTON_SIZE)
         infoOnSelectedBtn.setToolTip('Info on Selected')
 
         resetSelectedBtn = QPushButton()
+        resetSelectedBtn.setIcon(QIcon(os.path.join(ICON_FOLDER, 'recharger.png')))
+        resetSelectedBtn.setIconSize(self.ICON_SIZE)
         resetSelectedBtn.setFixedSize(self.BUTTON_SIZE)
         resetSelectedBtn.setToolTip('Reset Selected')
 
         fixSelectedBtn = QPushButton()
+        fixSelectedBtn.setIcon(QIcon(os.path.join(ICON_FOLDER, 'marteau.png')))
+        fixSelectedBtn.setIconSize(self.ICON_SIZE)
         fixSelectedBtn.setFixedSize(self.BUTTON_SIZE)
-        resetSelectedBtn.setToolTip('Fix Selected')
+        fixSelectedBtn.setToolTip('Fix Selected')
 
         buttonLayout = QHBoxLayout()
         buttonLayout.setAlignment(Qt.AlignLeft)
         buttonLayout.addWidget(checkAllBtn)
+        buttonLayout.addStretch()
         buttonLayout.addWidget(checkSelectedBtn)
-        buttonLayout.addWidget(resetSelectedBtn)
-        buttonLayout.addWidget(infoOnSelectedBtn)
         buttonLayout.addWidget(fixSelectedBtn)
+        buttonLayout.addWidget(resetSelectedBtn)
+        buttonLayout.addStretch()
+        buttonLayout.addWidget(infoOnSelectedBtn)
 
         mainLayout = QVBoxLayout()
         mainLayout.addLayout(buttonLayout)
