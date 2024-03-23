@@ -15,6 +15,15 @@ class ErrorCheck(Check):
         self.logs.append('Error detected!')
 
 
+class CorruptedCheck(Check):
+
+    name = 'Corrupted Check'
+    description = 'is corrupted'
+
+    def _check(self):
+        raise Exception('PLOP')
+
+
 class WarningCheck(Check):
 
     name = 'Warning Check'
@@ -30,7 +39,7 @@ def main():
     checks = [
         ErrorCheck(),
         WarningCheck(),
-        WarningCheck(),
+        CorruptedCheck(),
         Check(),
     ]
 

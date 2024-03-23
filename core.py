@@ -9,7 +9,6 @@ class Check:
     # attributes
     name = 'Untitled'
     description = 'Description of the check'
-    successMessage = 'All clear!'
 
     def __init__(self):
         self.state = self.NOT_CHECKED
@@ -33,7 +32,6 @@ class Check:
         # change not checked to success
         if self.state == self.NOT_CHECKED:
             self.state = self.SUCCESS
-            self.logs.append(self.successMessage)
 
     def fix(self):
         # not checked or success ?

@@ -9,3 +9,4 @@ TODO:
     - cancel build ?!
     - standalone tests
     - select problematic objects ?!
+    - trace back when error occurs ?!
