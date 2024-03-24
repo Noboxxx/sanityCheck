@@ -68,9 +68,14 @@ class CheckItem(QTreeWidgetItem):
         self.setToolTip(0, self.check.description)
 
         # logs items
+        children = list()
         for i in range(self.childCount()):
-            self.removeChild(self.child(i))
+            children.append(self.child(i))
 
+        for child in children:
+            self.removeChild(child)
+
+        # selectable
         selectable = False
         for log in self.check.logs:
             item = LogItem(log)
@@ -80,7 +85,6 @@ class CheckItem(QTreeWidgetItem):
             if selection:
                 selectable = True
 
-        # selectable
         if selectable:
             self.setIcon(0, QIcon(':aselect.png'))
 

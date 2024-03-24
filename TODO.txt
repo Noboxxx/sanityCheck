@@ -1,6 +1,6 @@
 TODO:
     - buttons
-    - info dialog (detailed information on the check)
+    - info dialog (detailed information on the check: time, ...)
     - progress bar (check all)
     - mixin
     - dpi
