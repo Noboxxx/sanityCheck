@@ -1,5 +1,4 @@
-import os.path
-
+import os
 from PySide2.QtCore import Qt, QSize
 from PySide2.QtGui import QColor, QIcon
 from PySide2.QtWidgets import QMainWindow, QVBoxLayout, QTreeWidget, QTreeWidgetItem, QWidget, QApplication, \
@@ -9,6 +8,43 @@ from .utils import getMayaMainWindow
 
 
 ICON_FOLDER = os.path.join(os.path.dirname(__file__), 'icon')
+
+
+class LogItem(QTreeWidgetItem):
+
+    def __init__(self, log):
+        super().__init__()
+
+        self.log = log
+
+        self.reload()
+
+    def reload(self):
+        self.setText(0, str(self.getText()))
+
+        selection = self.getSelection()
+        if selection:
+            self.setIcon(0, QIcon(':aselect.png'))
+
+    def getText(self):
+        if isinstance(self.log, dict):
+            text = self.log['text']
+        elif hasattr(self.log, 'text'):
+            text = getattr(self.log, 'text')
+        else:
+            text = str(self.log)
+
+        return text
+
+    def getSelection(self):
+        selection = None
+
+        if isinstance(self.log, dict):
+            selection = self.log['selection']
+        elif hasattr(self.log, 'selection'):
+            selection = getattr(self.log, 'selection')
+
+        return selection
 
 
 class CheckItem(QTreeWidgetItem):
@@ -35,10 +71,18 @@ class CheckItem(QTreeWidgetItem):
         for i in range(self.childCount()):
             self.removeChild(self.child(i))
 
+        selectable = False
         for log in self.check.logs:
-            item = QTreeWidgetItem()
-            item.setText(0, str(log))
+            item = LogItem(log)
             self.addChild(item)
+
+            selection = item.getSelection()
+            if selection:
+                selectable = True
+
+        # selectable
+        if selectable:
+            self.setIcon(0, QIcon(':aselect.png'))
 
         # state color
         stateColor = self.STATES_COLORS.get(self.check.state, self.DEFAULT_COLOR)
@@ -148,8 +192,8 @@ class SanityCheckUi(QMainWindow):
             QApplication.processEvents()
 
 
-def openSanityCheck(checks):
-    ui = SanityCheckUi(getMayaMainWindow(), 'Dev', checks)
+def openSanityCheck(name, checks):
+    ui = SanityCheckUi(getMayaMainWindow(), name, checks)
     ui.resize(700, 1000)
     ui.show()
     return ui

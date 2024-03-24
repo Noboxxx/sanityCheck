@@ -1,12 +1,9 @@
 TODO:
-    - json workflow
     - buttons
-    - fix all ?!
     - info dialog (detailed information on the check)
     - progress bar (check all)
     - mixin
     - dpi
     - cancel build ?!
     - standalone tests
-    - select problematic objects ?!
-    - trace back when error occurs ?!
+    - enable button if works on selection

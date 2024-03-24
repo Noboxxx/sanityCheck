@@ -1,6 +1,6 @@
 from time import sleep
 from .ui import openSanityCheck
-from .core import Check
+from .core import Check, getChecksFromJson, Log
 
 
 class ErrorCheck(Check):
@@ -11,7 +11,9 @@ class ErrorCheck(Check):
     def _check(self):
         sleep(2)
         self.state = self.ERROR
+        self.logs.append(Log('some objects are bad', selection=('time1', 'plop')))
         self.logs.append('It has fail')
+        self.logs.append({'text': 'It has fail', 'selection': None})
         self.logs.append('Error detected!')
 
 
@@ -35,12 +37,11 @@ class WarningCheck(Check):
         self.logs.append('Beware!')
 
 
-def main():
-    checks = [
-        ErrorCheck(),
-        WarningCheck(),
-        CorruptedCheck(),
-        Check(),
-    ]
+def checkConstructor():
+    return Check()
 
-    openSanityCheck(checks)
+
+def main():
+    checks = getChecksFromJson(r'C:\Users\pierr\OneDrive\Documents\repo\sanityCheck\sanityCheck.json')
+    print(checks)
+    openSanityCheck('Dev', checks)

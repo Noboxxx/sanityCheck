@@ -1,3 +1,14 @@
+import importlib
+import json
+
+
+class Log:
+
+    def __init__(self, text, selection=None):
+        self.text = text
+        self.selection = selection
+
+
 class Check:
 
     # states
@@ -27,7 +38,7 @@ class Check:
             self._check()
         except Exception as e:
             self.state = self.ERROR
-            self.logs.append(str(e))
+            self.logs.append(e)
 
         # change not checked to success
         if self.state == self.NOT_CHECKED:
@@ -56,9 +67,23 @@ class Check:
 
 
 def getChecksFromData(data):
-    pass
+    checks = list()
+
+    for path in data:
+        pathSplit = path.split('.')
+        callableName = pathSplit.pop()
+        moduleName = '.'.join(pathSplit)
+
+        module = importlib.import_module(moduleName)
+        check = getattr(module, callableName)()
+
+        checks.append(check)
+
+    return checks
 
 
 def getChecksFromJson(file):
-    pass
+    with open(file, 'r') as f:
+        data = json.load(f)
+    return getChecksFromData(data)
 
