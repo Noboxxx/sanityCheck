@@ -7,3 +7,4 @@ TODO:
     - cancel build ?!
     - standalone tests
     - enable button if works on selection
+    - group checks in interface ?!
