@@ -1,89 +1,88 @@
-import importlib
-import json
-
-
-class Log:
-
-    def __init__(self, text, selection=None):
-        self.text = text
-        self.selection = selection
-
+class CHECKSTATE:
+    NONE = 0 # waiting to be checked
+    SUCCESS = 10 # no errors found
+    WARNING = 20 # skippable errors found
+    ERROR = 30 # errors found
+    CRITICAL = 40 # check failed to execute properly
 
 class Check:
 
-    # states
-    SUCCESS = 0
-    WARNING = 1
-    ERROR = 2
-    NOT_CHECKED = 3
+    niceName = ''
 
-    # attributes
-    name = 'Untitled'
-    description = 'Description of the check'
+    fixable = True
+    selectable = True
+    hasTool = False
 
     def __init__(self):
-        self.state = self.NOT_CHECKED
-        self.logs = list()
+        self.state = CHECKSTATE.NONE
+        self.toSelect = list()
 
     def reset(self):
-        self.state = self.NOT_CHECKED
-        self.logs = list()
+        self.state = CHECKSTATE.NONE
+        self.toSelect = list()
+
+    def getLabel(self):
+        if self.niceName:
+            return self.niceName
+
+        return self.__class__.__name__
+
+    def getDescription(self):
+        return self.__doc__
+
+    def assertIsFixable(self):
+        if not self.fixable:
+            raise Exception('Check is not fixable')
+        elif self.state == CHECKSTATE.NONE:
+            raise Exception('Check needs to be checked first')
+        elif self.state == CHECKSTATE.SUCCESS:
+            raise Exception('Check is a success therefore it doesn\'t need to be fixed')
+        elif self.state == CHECKSTATE.CRITICAL:
+            raise Exception('Check failed to execute properly therefore it cannot be fixed properly')
+
+    def assertIsSelectable(self):
+        if not self.selectable:
+            raise Exception('Check is not selectable')
+        elif not self.toSelect:
+            raise Exception('Check contains nothing to be selected')
+
+    def assertHasTool(self):
+        if not self.hasTool:
+            raise Exception('Check has no related tool')
 
     def check(self):
-        # reset parameters
         self.reset()
-
-        # check
+        self.state = CHECKSTATE.NONE
         try:
             self._check()
         except Exception as e:
-            self.state = self.ERROR
-            self.logs.append(e)
-
-        # change not checked to success
-        if self.state == self.NOT_CHECKED:
-            self.state = self.SUCCESS
+            self.state = CHECKSTATE.CRITICAL
+            print(e)
 
     def fix(self):
-        # not checked or success ?
-        if self.state == self.NOT_CHECKED:
-            print('Please check first')
-            return
-        elif self.state == self.SUCCESS:
-            print('Nothing to fix')
-            return
-
-        # fix
-        self._fix()
-
-        # check
+        self.assertIsFixable()
+        try:
+            self._fix()
+        except Exception as e:
+            print(e)
         self.check()
 
+    def select(self):
+        self.assertIsSelectable()
+        self._select()
+
+    def openTool(self):
+        self.assertHasTool()
+        self.openTool()
+
     def _check(self):
-        pass
+        raise NotImplemented()
 
     def _fix(self):
-        pass
+        raise NotImplemented()
 
+    def _select(self):
+        raise NotImplemented()
 
-def getChecksFromData(data):
-    checks = list()
-
-    for path in data:
-        pathSplit = path.split('.')
-        callableName = pathSplit.pop()
-        moduleName = '.'.join(pathSplit)
-
-        module = importlib.import_module(moduleName)
-        check = getattr(module, callableName)()
-
-        checks.append(check)
-
-    return checks
-
-
-def getChecksFromJson(file):
-    with open(file, 'r') as f:
-        data = json.load(f)
-    return getChecksFromData(data)
-
+    def _openTool(self):
+        raise NotImplemented()

@@ -1,6 +1,0 @@
-[
-  "sanityCheck.core.Check",
-  "sanityCheck.test.CorruptedCheck",
-  "sanityCheck.test.ErrorCheck",
-  "sanityCheck.test.checkConstructor"
-]
